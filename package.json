@@ -1,0 +1,73 @@
+{
+  "name": "dsh-deep-reading",
+  "version": "0.1.0",
+  "description": "深度讲解：把一本书讲透（精读管线 + 逐字引用校验 + 阅读档案）。讲解为主，不提问；四步讲法 主张→证据→机制→边界 + 每节 AI 视角。不是摘要器，不是问答机器人。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./workflow": "./lib/pipeline/workflow.js",
+    "./parsers": "./lib/pipeline/parsers/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "prompts",
+    "skills",
+    "cordis.patch.yml",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "test": "node --test \"test/unit/*.test.mjs\"",
+    "test:unit": "node --test \"test/unit/*.test.mjs\"",
+    "load-check": "node test/load-check.mjs",
+    "drive": "node test/drive-txt.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "lockedRuntime": "workflow tool semantics — script sandbox has no fs/network/timers/require",
+    "minVersion": "0.1.1-rc.2",
+    "breakingPolicy": "re-run npm run load-check after each DSH upgrade"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-system-prompt": "*",
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/schemastery": "*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.1.1-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "js-yaml": "^4.2.0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "deep-reading",
+    "reading",
+    "book",
+    "quote-verification",
+    "citation",
+    "workflow",
+    "plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Madao1210/dsh-deep-reading.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Madao1210/dsh-deep-reading/issues"
+  },
+  "homepage": "https://github.com/Madao1210/dsh-deep-reading#readme",
+  "author": "Madao",
+  "license": "MIT"
+}

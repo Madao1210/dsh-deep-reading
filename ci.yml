@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # `npm install` also pulls the declared peers (@deepseek-ai/*), which is
+      # what the plugin resolves at runtime inside DSH. This step is the whole
+      # reason the three checks below can run outside a DSH installation.
+      - run: npm install --no-audit --no-fund
+      # 52 unit tests: structure detection, chunking, archive verification, the
+      # generated workflow script and its schemas.
+      - run: npm test
+      # Load check: resolves the plugin the way DSH does (installed path, bundle
+      # patch, Config schema), runs apply() on a fake context, and calls the
+      # tools once. Catches load-time failures a unit test cannot see.
+      - run: npm run load-check
+      # Closed loop: import a .txt → Map / Model / Reduce → verify and persist
+      # the archive. The sub-agents are test doubles; see the README for exactly
+      # what that does and does not prove.
+      - run: npm run drive

@@ -1,0 +1,28 @@
+# 依赖。本插件的 node_modules 不是从 npm 装的，而是本机指向 DSH 安装位置的
+# junction（用来解析 @deepseek-ai/* 那几个 peer），里面的绝对路径对别人毫无意义，
+# 而且在 Windows 上 git 会试图跟随这些链接。
+node_modules/
+
+# 运行数据。默认 dataRoot 在 $DSH_HOME/deep-reading，不在仓库里；
+# 这几条是防止有人把 dataRoot 配到仓库目录后误提交读者数据。
+books/
+incoming/
+drafts/
+archives/
+map/
+models/
+profile.json
+
+# 临时与缓存
+*.tmp
+*.tmp-*
+.tmp/
+output/
+_scale/
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,48 @@
+# dsh-deep-reading bundle patch: one insert registering the co-reading plugin.
+#
+# The row id MUST equal the cordis plugin `name` exported by lib/index.js.
+# Profile boot expands this file as one `insert` over the empty profile root;
+# a top-level row would be read as an id-targeted override of an EXISTING entry
+# ("entry not found") instead.
+#
+# Scope of this row: it registers ONE skill (dsh-deep-reading), THREE model
+# tools (reading_open / reading_archive / reading_status) and one system-prompt
+# section. It starts nothing by itself: no book is opened, no model is called,
+# nothing is written, until the model calls a tool.
+- insert:
+    - id: dsh-deep-reading
+      name: 'dsh-deep-reading'
+      config:
+        # ── storage ─────────────────────────────────────────────────────────
+        # Where per-book state lives. Empty string => $DSH_HOME/deep-reading.
+        # Deliberately NOT inside the plugin directory: this package is a
+        # `link:` into the profile, so storing reader state there would mix
+        # user data with source and be wiped by a re-clone.
+        dataRoot: ''
+        # Hard cap on a single ingested source file (bytes).
+        maxSourceBytes: 67108864
+
+        # ── structure detection ─────────────────────────────────────────────
+        # Heading depth that starts a new chapter (h1 => 1).
+        chapterHeadingLevel: 1
+        # A detected chapter shorter than this is kept but flagged low-confidence.
+        minChapterChars: 400
+
+        # ── chunking / Map wave ─────────────────────────────────────────────
+        # A chapter longer than this is split into parts at paragraph
+        # boundaries. A chapter is never split across waves.
+        maxCharsPerChunk: 12000
+        # Hard cap on chunks per Map wave = subagent count per `workflow` call.
+        # The reference workflow this design borrows from caps it for the same
+        # reason: an unbounded fan-out blows the single-call time limit.
+        maxChunksPerWave: 12
+
+        # ── archive verification ────────────────────────────────────────────
+        # Verify that every 「…」 span in an archive is verbatim in the source.
+        # This is the plugin's one non-negotiable job: the model is not allowed
+        # to put words in the author's mouth, and only a deterministic check
+        # can hold that line.
+        verifyQuotes: true
+        # Spans shorter than this are treated as terminology, not quotations,
+        # and reported as warnings instead of violations.
+        minQuoteChars: 4
