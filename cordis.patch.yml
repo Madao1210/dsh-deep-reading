@@ -1,0 +1,27 @@
+# dsh-deep-reading bundle patch: one insert registering the Deep Reading plugin.
+#
+# The row id MUST equal the cordis plugin `name` exported by lib/index.js.
+# Profile boot expands this file as one `insert` over the profile root; a
+# top-level row would be read as an id-targeted override of an EXISTING entry
+# ("entry not found") instead.
+#
+# Scope of this row: it registers TWO skills (deep-reading and the internal
+# deep-reading-chapter) and the dr_* tools (import / read / write / status /
+# usage / export_epub) plus reading_chapter. It starts nothing by itself: no
+# book is opened, no subagent is spawned, no file is written, until the model
+# calls a tool.
+- insert:
+    - id: dsh-deep-reading
+      name: 'dsh-deep-reading'
+      config:
+        # ── library root ────────────────────────────────────────────────────
+        # Where books live: <booksRoot>/<ID>/{book.json, index.md, chapters/,
+        # memory/, lecture/, user/, reader.md, exports/, usage.jsonl}.
+        # Empty string => $DSH_HOME/deep-reading/books (portable default).
+        #
+        # To share one library across installs (same books, same memories,
+        # "already read" reuse works both ways), override this in the
+        # profile's own cordis.patch.yml (id-targeted config override):
+        #   - id: dsh-deep-reading
+        #     config: { booksRoot: 'D:/deep-reading/books' }
+        booksRoot: ''
