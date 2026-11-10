@@ -1,6 +1,6 @@
 {
   "name": "dsh-deep-reading",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Deep Reading（DSH 插件）：Token 效率优先的读书流程——导入拆章（EPUB / md / txt / pdf）、单章精读子代理、带 [n] 定位的章节记忆、已读复用、逐字导出 EPUB。",
   "author": "Madao",
   "repository": "https://github.com/Madao1210/dsh-deep-reading",
@@ -19,7 +19,7 @@
   ],
   "engines": {
     "node": "^22.19.0 || >=24.0.0",
-    "dsh": ">=0.2.0-rc.2"
+    "dsh": ">=0.2.2-rc.1"
   },
   "scripts": {
     "load-check": "node test/load-check.mjs",
@@ -33,9 +33,9 @@
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
-    "@deepseek-ai/schemastery": "^3.18.4"
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-tools": "~0.2.2-rc.1",
+    "@deepseek-ai/schemastery": "~3.19.0"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/cordis": {
@@ -56,9 +56,9 @@
     "yazl": "^3.3.1"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "4.0.4",
-    "@deepseek-ai/dsh-tools": "0.2.0-rc.2",
-    "@deepseek-ai/schemastery": "3.18.4",
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
+    "@deepseek-ai/schemastery": "~3.19.0",
     "js-yaml": "^4.2.0"
   },
   "keywords": [

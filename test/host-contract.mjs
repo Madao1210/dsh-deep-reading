@@ -201,19 +201,23 @@ ok('扫描 PDF 被拒且提示 OCR', values.importScan?.ok === false && /OCR/.te
 
 // ------------------------------------------------- chapter child, token ledger
 const childStub = {
-  start: (provider, request) => ({
-    id: 'child-1',
-    provider,
-    request,
-    localAgent: { session: childSession },
-    result: Promise.resolve({
-      output: [{ type: 'text', text: '第二章讲解正文（子代理产出）。' }],
-      stopReason: 'completed',
-    }),
-    dispose: async () => {},
-  }),
+  getProvider: (name) => (name === 'spawn' ? { name: 'spawn' } : undefined),
+  startActivation: (spec) => {
+    if (spec.provider !== 'spawn') throw new Error(`unexpected provider ${spec.provider}`);
+    activationSpecs.push(spec);
+    return {
+      childId: 'host-contract-child',
+      result: Promise.resolve({
+        output: [{ type: 'text', text: '第二章讲解正文（子代理产出）。' }],
+        stopReason: 'completed',
+      }),
+      dispose: async () => {},
+    };
+  },
 };
+const activationSpecs = [];
 const disposeSubagents = ctx.provide('subagents', childStub);
+ctx.provide('sessions', { get: (id) => (id === 'host-contract-child' ? childSession : undefined) });
 settle(childSession, CHILD_USAGE);
 
 const chapterTool = tools.find((t) => t.name === 'reading_chapter');
@@ -224,6 +228,7 @@ try {
   await chapterTool.output.render({ book: 'host', chapter: 2 }, chapterValue);
   ok('子代理链路实跑且 ok', chapterValue.ok === true, `ok=${chapterValue.ok} ${chapterValue.error ?? ''}`);
   ok('子任务文本逐字返回', chapterValue.lines.join('\n').includes('子代理产出'));
+  eq('startActivation 规格 provider', activationSpecs[0]?.provider, 'spawn');
 } catch (e) {
   ok('子代理链路实跑且 ok', false, e.message.split('\n')[0]);
 }

@@ -148,7 +148,7 @@ dsh plugin --profile <profile> add <本目录路径>
 ## 技能
 
 - `deep-reading`：入口流程（模型可调用）；用户说「读这本书 / 继续读书 / 精读第 N 章 / 导出阅读笔记」时进入
-- `deep-reading-chapter`：章节子代理的说明书（模型/用户都不可调用，只作为子代理 persona，由 `reading_chapter` 注入）
+- `deep-reading-chapter`：章节子代理的说明书（模型/用户都不可调用，由 `reading_chapter` 内联进子代理 prompt；DSH 0.2.2 起 SubagentStartRequest 不再支持 persona）
 
 ## 源格式与转换（txt / pdf）
 
