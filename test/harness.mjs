@@ -150,9 +150,9 @@ spawns.length = 0;
 const reuseShort = await call('reading_chapter', { book: 'gate', chapter: 2 });
 ok('partial 章不短路', spawns.length === 1, `spawn 次数 ${spawns.length}`);
 eq('子任务 provider=spawn', spawns[0]?.provider, 'spawn');
-ok('子任务带 persona（章节技能正文）', typeof spawns[0]?.request.persona === 'string' && spawns[0].request.persona.includes('单章精读'));
+ok('子任务 prompt 内联规程（章节技能正文）', typeof spawns[0]?.request.prompt[0].text === 'string' && spawns[0].request.prompt[0].text.includes('单章精读'));
 eq('子任务 maxDepth', spawns[0]?.request.maxDepth, 1);
-eq('子任务 label', spawns[0]?.request.label, 'deep-reading gate ch002');
+eq('子任务 label', spawns[0]?.label, 'deep-reading gate ch002');
 ok('子任务用父会话', spawns[0]?.request.parent === exec.agent);
 ok('简报自包含', spawns[0]?.request.prompt[0].text.includes('books/gate 的第 2 章'), spawns[0]?.request.prompt[0].text?.slice(0, 60));
 ok('简报禁止用文件工具读原文', /不要用文件读取工具读 chapters\/002\.md/.test(spawns[0].request.prompt[0].text));
@@ -317,17 +317,18 @@ function makeContext() {
         // a wrong-level read through as silent zeros.
         stateOf: (session) => ({ totals: session.id === 'child-sess' ? childUsage : PARENT_USAGE, last: null }),
       }
-      : undefined),
+      : key === 'sessions'
+        ? { get: (id) => (id.startsWith('child-') ? { id: 'child-sess' } : undefined) }
+        : undefined),
     subagents: {
-      start: (provider, request) => {
-        spawns.push({ provider, request });
-        const run = {
-          id: `child-${spawns.length}`,
-          localAgent: { session: { id: 'child-sess' } },
+      getProvider: (name) => (name === 'spawn' ? { name: 'spawn' } : undefined),
+      startActivation: (spec) => {
+        spawns.push(spec);
+        return {
+          childId: `child-${spawns.length}`,
           result: Promise.resolve({ output: makeChildOutput(), stopReason: 'completed' }),
           dispose: async () => {},
         };
-        return run;
       },
     },
   };
